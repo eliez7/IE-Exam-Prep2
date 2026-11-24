@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>International Economics Practice Exam</title>
+    <title>International Economics - Tutorial Practice Exam</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -34,6 +34,32 @@
         h1 {
             color: var(--primary);
             margin-bottom: 0.5rem;
+        }
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .nav-btn {
+            background: white;
+            border: 2px solid var(--border-color);
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .nav-btn:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
         .quiz-card {
             background: var(--card-bg);
@@ -92,22 +118,18 @@
             border-radius: 8px;
             border: 1px solid #bfdbfe;
         }
-        .btn {
-            display: block;
-            width: 100%;
-            background: var(--primary);
+        .back-menu-btn {
+            background: #64748b;
             color: white;
             border: none;
-            padding: 0.75rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
         }
-        .btn:hover {
-            background: var(--primary-hover);
+        .back-menu-btn:hover {
+            background: #475569;
         }
     </style>
 </head>
@@ -115,87 +137,182 @@
 
 <div class="container">
     <header>
-        <h1>International Economics Practice Quiz</h1>
-        <p>Advanced College Level (Tutorials 1–11 Sample)</p>
+        <h1>International Economics Exam Prep</h1>
+        <p>Select a tutorial module to start practicing</p>
     </header>
 
-    <div class="score-board">
-        Score: <span id="score">0</span> / <span id="total">5</span>
+    <div id="menu-view">
+        <div class="nav-grid">
+            <button class="nav-btn" onclick="loadTutorial(1)">Tutorial 1<br><small style="font-weight:normal;font-size:0.8rem;">Ricardian Model & Gravity</small></button>
+            <button class="nav-btn" onclick="loadTutorial(2)">Tutorial 2<br><small style="font-weight:normal;font-size:0.8rem;">Specific Factors</small></button>
+            <button class="nav-btn" onclick="loadTutorial(3)">Tutorial 3<br><small style="font-weight:normal;font-size:0.8rem;">Heckscher-Ohlin Model</small></button>
+            <button class="nav-btn" onclick="loadTutorial(4)">Tutorial 4<br><small style="font-weight:normal;font-size:0.8rem;">Tariffs & Trade Policy</small></button>
+        </div>
     </div>
 
-    <div id="quiz-container"></div>
-
-    <button class="btn" id="restart-btn" onclick="loadQuiz()" style="display:none;">Restart Quiz</button>
+    <div id="quiz-view" style="display:none;">
+        <button class="back-menu-btn" onclick="returnToMenu()">← Back to Tutorials</button>
+        <div class="score-board">
+            <span id="tutorial-title">Tutorial</span> Score: <span id="score">0</span> / <span id="total">0</span>
+        </div>
+        <div id="quiz-container"></div>
+    </div>
 </div>
 
 <script>
-    const quizData = [
-        {
-            question: "1. Based on the gravity model, bilateral trade volume between two countries is proportional to:",
-            options: [
-                "A. Distance alone without regard to economic size.",
-                "B. The product of their GDPs and inversely related to the distance between them.",
-                "C. The difference in their population growth rates.",
-                "D. Fixed tariff barriers between neighboring states."
-            ],
-            answer: 1
+    const tutorials = {
+        1: {
+            title: "Tutorial 1: The Ricardian Model & Gravity",
+            questions: [
+                {
+                    question: "1. Based on the gravity model, evaluate the statement: Mexico is close to the U.S. and trades heavily with it, while Brazil is far from both and splits trade. We should:",
+                    options: [
+                        "A. Disagree, because distance is the sole driver of trade volume.",
+                        "C. Disagree, because the gravity model incorporates economic size (GDP), meaning Brazil trades significantly with large U.S. and E.U. markets despite distance.",
+                        "B. Agree, because countries equidistant from major markets split trade equally.",
+                        "D. Agree, because GDP has no statistical impact on bilateral trade flows."
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "2. A country has a comparative advantage in producing a good if:",
+                    options: [
+                        "A. Its opportunity cost of producing that good in terms of other goods is lower than in the other country.",
+                        "B. It requires more absolute labor hours than its trading partner.",
+                        "C. It maintains strict import quotas.",
+                        "D. Its nominal wage rate is lower."
+                    ],
+                    answer: 0
+                },
+                {
+                    question: "3. When one country can produce a unit of a good with less labor than another country, it possesses a(n):",
+                    options: [
+                        "A. Comparative advantage",
+                        "B. Absolute advantage",
+                        "C. Competitive subsidy",
+                        "D. Factor abundance"
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "4. If a country's production possibilities frontier is drawn as a straight line, production occurs under conditions of:",
+                    options: [
+                        "A. Increasing opportunity costs",
+                        "B. Constant opportunity costs",
+                        "C. Decreasing opportunity costs",
+                        "D. Variable returns to scale"
+                    ],
+                    answer: 1
+                }
+            ]
         },
-        {
-            question: "2. In the Ricardian model, a country has a comparative advantage in producing a good if:",
-            options: [
-                "A. It requires more absolute labor hours than its trading partner.",
-                "B. Its opportunity cost of producing that good in terms of other goods is lower than in the other country.",
-                "C. It maintains a closed trade policy and subsidizes exports.",
-                "D. Its currency is pegged to the foreign currency."
-            ],
-            answer: 1
+        2: {
+            title: "Tutorial 2: Specific Factors Model",
+            questions: [
+                {
+                    question: "1. What key structural feature does the specific factors model incorporate regarding factor mobility?",
+                    options: [
+                        "A. All factors are completely mobile across all economic sectors.",
+                        "B. Some factors (like labor) are mobile across sectors, while others (like capital or land) are strictly sector-specific.",
+                        "C. There is only one factor of production in the entire economy.",
+                        "D. Factors are entirely immobile internationally."
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "2. In each sector of a specific factors economy, profit-maximizing employers hire labor up to the point where:",
+                    options: [
+                        "A. The marginal product of labor equals the wage rate.",
+                        "B. Product price equals the nominal wage.",
+                        "C. The marginal product of labor times the price of the product equals the wage rate (value of marginal product equals wage).",
+                        "D. Total revenue equals total fixed costs."
+                    ],
+                    answer: 2
+                },
+                {
+                    question: "3. The fundamental reason why international trade benefits a country overall is that it:",
+                    options: [
+                        "A. Increases reliance on foreign central banks.",
+                        "B. Expands the economy's overall consumption possibilities choices beyond domestic production limits.",
+                        "C. Guarantees that every individual citizen experiences higher real wages.",
+                        "D. Eliminates all domestic competition."
+                    ],
+                    answer: 1
+                }
+            ]
         },
-        {
-            question: "3. Unlike the Ricardian model, what key structural feature does the specific factors model incorporate?",
-            options: [
-                "A. All factors of production are completely mobile across sectors.",
-                "B. Labor is mobile across sectors while other factors are strictly sector-specific.",
-                "C. There is only one factor of production (labor).",
-                "D. Production possibilities frontiers are perfectly straight lines."
-            ],
-            answer: 1
+        3: {
+            title: "Tutorial 3: Heckscher-Ohlin Model",
+            questions: [
+                {
+                    question: "1. What core theorem states that an increase in the relative price of a good leads to a rise in the return to the factor used intensively in that good?",
+                    options: [
+                        "A. The Stolper-Samuelson theorem",
+                        "B. The Rybczynski theorem",
+                        "C. The factor-price equalization theorem",
+                        "D. The Heckscher-Ohlin theorem"
+                    ],
+                    answer: 0
+                },
+                {
+                    question: "2. What did economist Wassily Leontief discover when testing the Heckscher-Ohlin model on U.S. trade data?",
+                    options: [
+                        "A. U.S. exports were substantially more capital-intensive than U.S. imports.",
+                        "B. U.S. exports were actually less capital-intensive (and more labor-intensive) than U.S. imports, creating the 'Leontief Paradox'.",
+                        "C. Trade patterns matched theoretical predictions with 100% accuracy.",
+                        "D. Capital mobility was zero worldwide."
+                    ],
+                    answer: 1
+                }
+            ]
         },
-        {
-            question: "4. In the Krugman monopolistic competition model of trade, what occurs when countries open their markets?",
-            options: [
-                "A. The number of operating firms decreases and prices rise.",
-                "B. Product variety decreases and average costs rise.",
-                "C. The number of operating firms in the integrated market increases while average prices fall due to scale economies.",
-                "D. Monopolies completely eliminate all domestic producers."
-            ],
-            answer: 2
-        },
-        {
-            question: "5. According to the policy trilemma (impossible trinity) in international macroeconomics, which three policies cannot all be pursued simultaneously?",
-            options: [
-                "A. Fiscal surplus, trade balance, and wage rigidity.",
-                "B. Fixed exchange rate, free capital mobility, and independent monetary policy.",
-                "C. Floating exchange rate, capital controls, and gold standard.",
-                "D. Tariffs, quotas, and export subsidies."
-            ],
-            answer: 1
+        4: {
+            title: "Tutorial 4: Tariffs and Trade Policy",
+            questions: [
+                {
+                    question: "1. When a large importing country imposes an import tariff, what is the net effect on its national welfare?",
+                    options: [
+                        "A. It always suffers absolute welfare loss with no offsetting benefits.",
+                        "B. It may experience a net welfare gain if its terms-of-trade improvement outweighs deadweight consumption and production losses.",
+                        "C. National welfare remains perfectly unchanged.",
+                        "D. Consumer surplus increases while producer surplus drops to zero."
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "2. What is a defining economic characteristic of an import quota compared to an equivalent tariff under domestic monopoly conditions?",
+                    options: [
+                        "A. An import quota limits market competition more strictly, effectively transforming a domestic monopoly into a more aggressive single-price setter.",
+                        "B. An import quota automatically guarantees tax revenue for the government.",
+                        "C. There is zero difference in market structure effects.",
+                        "D. Quotas eliminate domestic deadweight loss entirely."
+                    ],
+                    answer: 0
+                }
+            ]
         }
-    ];
+    };
 
-    let score = 0;
+    let currentScore = 0;
     let answeredCount = 0;
+    let activeTutorialId = null;
 
-    function loadQuiz() {
-        score = 0;
+    function loadTutorial(id) {
+        activeTutorialId = id;
+        const tut = tutorials[id];
+        currentScore = 0;
         answeredCount = 0;
-        document.getElementById("score").innerText = score;
-        document.getElementById("total").innerText = quizData.length;
-        document.getElementById("restart-btn").style.display = "none";
-        
+
+        document.getElementById("menu-view").style.display = "none";
+        document.getElementById("quiz-view").style.display = "block";
+        document.getElementById("tutorial-title").innerText = tut.title;
+        document.getElementById("score").innerText = currentScore;
+        document.getElementById("total").innerText = tut.questions.length;
+
         const container = document.getElementById("quiz-container");
         container.innerHTML = "";
 
-        quizData.forEach((q, qIndex) => {
+        tut.questions.forEach((q, qIndex) => {
             const card = document.createElement("div");
             card.className = "quiz-card";
 
@@ -213,39 +330,36 @@
         });
     }
 
+    function returnToMenu() {
+        document.getElementById("quiz-view").style.display = "none";
+        document.getElementById("menu-view").style.display = "block";
+    }
+
     function selectOption(qIndex, oIndex, element) {
         const card = element.closest(".quiz-card");
         const options = card.querySelectorAll(".option-item");
         const feedback = document.getElementById(`feedback-${qIndex}`);
 
-        // Prevent changing answer once selected
         if (card.getAttribute("data-answered") === "true") return;
         card.setAttribute("data-answered", "true");
 
         answeredCount++;
-
-        const correctOpt = quizData[qIndex].answer;
+        const tut = tutorials[activeTutorialId];
+        const correctOpt = tut.questions[qIndex].answer;
 
         if (oIndex === correctOpt) {
             element.classList.add("correct");
             feedback.style.color = "var(--success)";
             feedback.innerText = "Correct!";
-            score++;
-            document.getElementById("score").innerText = score;
+            currentScore++;
+            document.getElementById("score").innerText = currentScore;
         } else {
             element.classList.add("incorrect");
             options[correctOpt].classList.add("correct");
             feedback.style.color = "var(--error)";
-            feedback.innerText = `Incorrect. The correct answer is: ${quizData[qIndex].options[correctOpt]}`;
-        }
-
-        if (answeredCount === quizData.length) {
-            document.getElementById("restart-btn").style.display = "block";
+            feedback.innerText = `Incorrect. The correct answer is: ${tut.questions[qIndex].options[correctOpt]}`;
         }
     }
-
-    // Initialize quiz on load
-    loadQuiz();
 </script>
 
 </body>
