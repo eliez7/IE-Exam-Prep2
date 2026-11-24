@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>International Economics Practice Exam</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --success: #16a34a;
+            --error: #dc2626;
+        }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        .quiz-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        .question-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .option-item {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .option-item:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+        .option-item.correct {
+            background: #dcfce7;
+            border-color: var(--success);
+            color: #166534;
+            font-weight: 600;
+        }
+        .option-item.incorrect {
+            background: #fee2e2;
+            border-color: var(--error);
+            color: #991b1b;
+        }
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .score-board {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #eff6ff;
+            border-radius: 8px;
+            border: 1px solid #bfdbfe;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 2rem;
+        }
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>International Economics Practice Quiz</h1>
+        <p>Advanced College Level (Tutorials 1–11 Sample)</p>
+    </header>
+
+    <div class="score-board">
+        Score: <span id="score">0</span> / <span id="total">5</span>
+    </div>
+
+    <div id="quiz-container"></div>
+
+    <button class="btn" id="restart-btn" onclick="loadQuiz()" style="display:none;">Restart Quiz</button>
+</div>
+
+<script>
+    const quizData = [
+        {
+            question: "1. Based on the gravity model, bilateral trade volume between two countries is proportional to:",
+            options: [
+                "A. Distance alone without regard to economic size.",
+                "B. The product of their GDPs and inversely related to the distance between them.",
+                "C. The difference in their population growth rates.",
+                "D. Fixed tariff barriers between neighboring states."
+            ],
+            answer: 1
+        },
+        {
+            question: "2. In the Ricardian model, a country has a comparative advantage in producing a good if:",
+            options: [
+                "A. It requires more absolute labor hours than its trading partner.",
+                "B. Its opportunity cost of producing that good in terms of other goods is lower than in the other country.",
+                "C. It maintains a closed trade policy and subsidizes exports.",
+                "D. Its currency is pegged to the foreign currency."
+            ],
+            answer: 1
+        },
+        {
+            question: "3. Unlike the Ricardian model, what key structural feature does the specific factors model incorporate?",
+            options: [
+                "A. All factors of production are completely mobile across sectors.",
+                "B. Labor is mobile across sectors while other factors are strictly sector-specific.",
+                "C. There is only one factor of production (labor).",
+                "D. Production possibilities frontiers are perfectly straight lines."
+            ],
+            answer: 1
+        },
+        {
+            question: "4. In the Krugman monopolistic competition model of trade, what occurs when countries open their markets?",
+            options: [
+                "A. The number of operating firms decreases and prices rise.",
+                "B. Product variety decreases and average costs rise.",
+                "C. The number of operating firms in the integrated market increases while average prices fall due to scale economies.",
+                "D. Monopolies completely eliminate all domestic producers."
+            ],
+            answer: 2
+        },
+        {
+            question: "5. According to the policy trilemma (impossible trinity) in international macroeconomics, which three policies cannot all be pursued simultaneously?",
+            options: [
+                "A. Fiscal surplus, trade balance, and wage rigidity.",
+                "B. Fixed exchange rate, free capital mobility, and independent monetary policy.",
+                "C. Floating exchange rate, capital controls, and gold standard.",
+                "D. Tariffs, quotas, and export subsidies."
+            ],
+            answer: 1
+        }
+    ];
+
+    let score = 0;
+    let answeredCount = 0;
+
+    function loadQuiz() {
+        score = 0;
+        answeredCount = 0;
+        document.getElementById("score").innerText = score;
+        document.getElementById("total").innerText = quizData.length;
+        document.getElementById("restart-btn").style.display = "none";
+        
+        const container = document.getElementById("quiz-container");
+        container.innerHTML = "";
+
+        quizData.forEach((q, qIndex) => {
+            const card = document.createElement("div");
+            card.className = "quiz-card";
+
+            let optionsHtml = "";
+            q.options.forEach((opt, oIndex) => {
+                optionsHtml += `<li class="option-item" onclick="selectOption(${qIndex}, ${oIndex}, this)">${opt}</li>`;
+            });
+
+            card.innerHTML = `
+                <div class="question-title">${q.question}</div>
+                <ul class="options-list">${optionsHtml}</ul>
+                <div class="feedback" id="feedback-${qIndex}"></div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function selectOption(qIndex, oIndex, element) {
+        const card = element.closest(".quiz-card");
+        const options = card.querySelectorAll(".option-item");
+        const feedback = document.getElementById(`feedback-${qIndex}`);
+
+        // Prevent changing answer once selected
+        if (card.getAttribute("data-answered") === "true") return;
+        card.setAttribute("data-answered", "true");
+
+        answeredCount++;
+
+        const correctOpt = quizData[qIndex].answer;
+
+        if (oIndex === correctOpt) {
+            element.classList.add("correct");
+            feedback.style.color = "var(--success)";
+            feedback.innerText = "Correct!";
+            score++;
+            document.getElementById("score").innerText = score;
+        } else {
+            element.classList.add("incorrect");
+            options[correctOpt].classList.add("correct");
+            feedback.style.color = "var(--error)";
+            feedback.innerText = `Incorrect. The correct answer is: ${quizData[qIndex].options[correctOpt]}`;
+        }
+
+        if (answeredCount === quizData.length) {
+            document.getElementById("restart-btn").style.display = "block";
+        }
+    }
+
+    // Initialize quiz on load
+    loadQuiz();
+</script>
+
+</body>
+</html>
